@@ -250,7 +250,7 @@ app.get('/', isAuthenticated, (req, res) => {
 });
 
 // Load client secrets
-const credentials = JSON.parse(fs.readFileSync(path.join(__dirname, 'client_secret.json')));
+const credentials = JSON.parse(fs.readFileSync(path.join(__dirname, 'client_secret_491560506912-smrrt5m9f88ujvj6lv5g6kre2lsgrase.apps.googleusercontent.com.json')));
 
 // Create OAuth client
 const oAuth2Client = new google.auth.OAuth2(
@@ -268,6 +268,70 @@ app.get('/auth/google', (req, res) => {
   res.redirect(authUrl);
 });
 
+// Callback route after user authorization
+app.get('/auth/google/callback', async (req, res) => {
+    const { code } = req.query;
+    try {
+      const { tokens } = await oAuth2Client.getToken(code);
+      oAuth2Client.setCredentials(tokens);
+  
+      // Store tokens in the session or database for later use
+      // You can now use this to interact with Google Calendar
+  
+      // Save API usage history
+      const history = new ApiHistory({
+        userId: req.user._id, // Assuming user is authenticated
+        action: 'Google Calendar API Auth',
+      });
+      await history.save();
+  
+      // Redirect user after successful login
+      res.redirect('/calendar');
+    } catch (err) {
+      res.status(500).send('Authentication failed');
+    }
+});
+
+// Fetch calendar events
+app.get('/calendar', async (req, res) => {
+    const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
+    try {
+      const response = await calendar.events.list({
+        calendarId: 'primary',
+        timeMin: (new Date()).toISOString(),
+        maxResults: 10,
+        singleEvents: true,
+        orderBy: 'startTime',
+      });
+  
+      const events = response.data.items;
+      events.forEach(async (event) => {
+        // Save events to MongoDB
+        const newEvent = new Event({
+          title: event.summary,
+          startTime: event.start.dateTime || event.start.date,
+          userId: req.user._id, // Assuming user is authenticated
+        });
+        await newEvent.save();
+    });
+
+     // Render calendar events in frontend (EJS)
+     res.render('calendar', { events });
+    } catch (err) {
+      res.status(500).send('Error fetching calendar events');
+    }
+  });
+  
+  // View to display calendar events
+  app.get('/calendar-view', async (req, res) => {
+    try {
+      const events = await Event.find({ userId: req.user._id });
+      res.render('calendar-view', { events });
+    } catch (err) {
+      res.status(500).send('Error retrieving events');
+    }
+});
+        
 
 // Start server
 app.listen(port, () => {
