@@ -30,6 +30,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
+app.use(express.static('public'));
+
 
 // Session setup
 app.use(session({
@@ -331,6 +333,92 @@ app.get('/calendar', async (req, res) => {
       res.status(500).send('Error retrieving events');
     }
 });
+
+// MongoDB Schema for time entries
+const timeEntrySchema = new mongoose.Schema({
+    userId: { type: String, required: true },
+    sessionType: { type: String, required: true }, // 'work' or 'break'
+    duration: { type: Number, required: true }, // duration in seconds
+    timestamp: { type: Date, default: Date.now },
+    togglEntryId: { type: String, required: true } // Store Toggl entry ID
+});
+
+const TimeEntry = mongoose.model('TimeEntry', timeEntrySchema);
+
+// Toggl API Token (replace with your actual Toggl API token)
+const togglApiToken = '5497ef2d33be904c06d8c5ea5d26bd91';
+const togglWorkspaceId = '8368585';
+
+app.get('/timer', (req, res) => {
+    res.render('homeTimer.ejs'); 
+  });
+  
+
+// Start timer route (Toggl API)
+app.post('/timer/start', (req, res) => {
+    const { userId, sessionType } = req.body;
+
+    // Start time entry with Toggl
+    axios.post('https://api.track.toggl.com/api/v8/time_entries/start', {
+        time_entry: {
+            description: `${sessionType} Pomodoro session`,
+            workspace_id: togglWorkspaceId,
+            tags: ['Pomodoro'],
+            created_with: 'habit-tracker',
+        },
+    }, {
+        auth: {
+            username: togglApiToken,
+            password: 'api_token', // Using your Toggl API token for basic auth
+        }
+    })
+    .then(response => {
+        const togglEntryId = response.data.data.id;
+
+        // Save entry in MongoDB with Toggl entry ID
+        const timeEntry = new TimeEntry({
+            userId,
+            sessionType,
+            duration: 0, // duration will be updated later when stopped
+            togglEntryId,
+        });
+
+        timeEntry.save().then(() => {
+            res.send('Time entry started');
+        }).catch(err => {
+            res.status(500).send('Error saving to database');
+        });
+    })
+    .catch(err => {
+        res.status(500).send('Error starting time entry');
+    });
+});
+
+// Stop timer route (Toggl API)
+app.post('/timer/stop', (req, res) => {
+    const { timeEntryId } = req.body;
+
+    // Stop the time entry with Toggl
+    axios.put(`https://api.track.toggl.com/api/v8/time_entries/${timeEntryId}/stop`, {}, {
+        auth: {
+            username: togglApiToken,
+            password: 'api_token',
+        }
+    })
+    .then(response => {
+        // Update duration in MongoDB (fetch the duration from Toggl response)
+        const duration = response.data.data.duration;
+
+        TimeEntry.findOneAndUpdate({ togglEntryId: timeEntryId }, { duration })
+            .then(() => res.send('Time entry stopped'))
+            .catch(err => res.status(500).send('Error updating database'));
+    })
+    .catch(err => {
+        res.status(500).send('Error stopping time entry');
+    });
+});
+
+
         
 
 // Start server
