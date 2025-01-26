@@ -52,6 +52,11 @@ function isAdmin(req, res, next) {
     res.redirect('/');
 }
 
+app.get('/privacy-policy', (req, res) => {
+    res.render('privacy-policy');
+});
+
+
 // Routes
 app.get('/login', (req, res) => {
     if (req.session.user) {
