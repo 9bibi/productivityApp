@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/weather">Weather</a></li>
+            <% if (username) { %>
+                <% if (isAdminUser) { %>
+                    <li><a href="/admin">Admin</a></li>
+                <% } %>
+                <li><a href="/logout">Logout</a></li>
+            <% } else { %>
+                <li><a href="/login">Login</a></li>
+            <% } %>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Weather Information</h1>
+
+        <input type="text" id="city" placeholder="Enter city" />
+        <button id="fetch-weather-btn">Get Weather</button>
+
+        <div id="weather-info"></div>
+    </div>
+
+    <script src="weather.js"></script>
+
+<!-- Include Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBelzthuaJ0R0KNoI-Car9ugecM6LrNcLo&callback=initMap&libraries=&v=weekly" async></script>
+
+<!-- Map container -->
+<div id="map" style="height: 400px; width: 100%;"></div>
+
+<!-- Link to your weather.js file -->
+<script src="weather.js"></script>
+
+<footer>
+    <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
+    <p>IT-2307</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/weather">Weather</a></li>
+            <% if (username) { %>
+                <% if (isAdminUser) { %>
+                    <li><a href="/admin">Admin</a></li>
+                <% } %>
+                <li><a href="/logout">Logout</a></li>
+            <% } else { %>
+                <li><a href="/login">Login</a></li>
+            <% } %>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Admin Panel</h1>
+        
+        <form action="/admin/add" method="POST" class="form-section">
+            <h3>Add User</h3>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <label for="isAdmin">
+                <input type="checkbox" name="isAdmin"> Admin
+            </label>
+            <button type="submit">Add</button>
+        </form>
+        
+        <div class="user-list">
+            <h3>User List</h3>
+            <ul>
+                <% users.forEach(user => { %>
+                    <li>
+                        <form action="/admin/edit/<%= user._id %>" method="POST" class="inline-form">
+                            <input type="text" name="username" value="<%= user.username %>" required>
+                            <label for="isAdmin">
+                                <input type="checkbox" name="isAdmin" <%= user.isAdmin ? 'checked' : '' %>> Admin
+                            </label>
+                            <button type="submit">Edit</button>
+                        </form>
+                        <form action="/admin/delete/<%= user._id %>" method="POST" class="inline-form">
+                            <button type="submit" class="delete-btn">Delete</button>
+                        </form>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
+        <p>IT-2307</p>
+    </footer>
+    
+</body>
+</html>

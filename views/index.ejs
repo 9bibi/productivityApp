@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar placed outside the container at the top -->
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/weather">Weather</a></li>
+            <% if (username) { %>
+                <% if (isAdminUser) { %>
+                    <li><a href="/admin">Admin</a></li>
+                <% } %>
+                <li><a href="/logout">Logout</a></li>
+            <% } else { %>
+                <li><a href="/login">Login</a></li>
+            <% } %>
+        </ul>
+    </nav>
+    
+    <div id="quote-section">
+        <h2>Daily Motivation</h2>
+        <div id="daily-quote">
+        </div>
+    </div>
+    
+    <!-- Habit Tracker container -->
+    <div class="container">
+        <h1>Habit Tracker</h1>
+        <p>Hello, <%= username || 'Guest' %>!</p>
+
+        <!-- Notification area -->
+        <div id="notification" class="notification"></div>
+
+        <div id="habit-form">
+            <input type="text" id="habit-name" placeholder="Enter habit name" />
+            <select id="habit-frequency">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+            </select>
+            <select id="habit-category">
+                <option value="Health">Health</option>
+                <option value="Productivity">Productivity</option>
+                <option value="Personal Development">Personal Development</option>
+            </select>
+            <input type="text" id="habit-goal" placeholder="Set your habit goal (e.g., '30 minutes of exercise')" />
+            <button id="add-habit-btn">Add Habit</button>
+        </div>
+
+        <div id="habit-dashboard">
+            <h2>Your Habits</h2>
+            <table id="habit-table">
+                <thead>
+                    <tr>
+                        <th>Habit Name</th>
+                        <th>Frequency</th>
+                        <th>Category</th>
+                        <th>Goal</th>
+                        <th>Streak</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="habit-list">
+                    <!-- Habit list will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+        <div style="width: 70%; margin: 0 auto; padding: 20px;">
+            <h3>Habit Completion Stats</h3>
+            <canvas id="habitChart"></canvas>
+            <div id="completionSummary" style="text-align: center; margin-top: 20px; font-size: 18px; color: #333;">
+                Your habit stats will appear here!
+              </div>
+        </div>
+    </div>
+    
+    <section id="articles">
+    </section>
+
+    <script src="app.js"></script>
+
+    <footer>
+        <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
+        <p>IT-2307</p>
+    </footer>
+    
+</body>
+</html>
