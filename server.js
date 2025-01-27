@@ -336,7 +336,59 @@ app.post('/timer/stop', (req, res) => {
     });
 });
 
+const PEXELS_API_KEY = 'lUP5dA2HJTkoRiMagadoQf8qFC6tJbEyr86DCNqn1Xmnj9EbyZP4YwTw'; // Pexels API key
+const PEXELS_API_URL = 'https://api.pexels.com/v1/search';
 
+// Image schema and model (for storing search data in MongoDB)
+const imageSchema = new mongoose.Schema({
+    keyword: { type: String, required: true },
+    images: [{
+        src: { type: String, required: true },
+        photographer: { type: String, required: true },
+        photographer_url: { type: String, required: true },
+    }],
+    timestamp: { type: Date, default: Date.now },
+});
+
+const Image = mongoose.model('Image', imageSchema);
+
+// Fetch images from Pexels API
+async function fetchImages(keyword) {
+    try {
+        const response = await axios.get(PEXELS_API_URL, {
+            headers: {
+                Authorization: PEXELS_API_KEY,
+            },
+            params: { query: keyword, per_page: 10 },
+        });
+        return response.data.photos.map(photo => ({
+            src: photo.src.medium,
+            photographer: photo.photographer,
+            photographer_url: photo.photographer_url
+        })); // Map data for use in the template
+    } catch (error) {
+        console.error("Error fetching images:", error);
+        return [];
+    }
+}
+
+// POST route to search and store images in MongoDB
+app.post('/search', async (req, res) => {
+    const keyword = req.body.keyword;
+    const images = await fetchImages(keyword);
+
+    // Save to MongoDB
+    const newImageData = new Image({
+        keyword: keyword,
+        images: images,
+        timestamp: new Date(),
+    });
+
+    await newImageData.save();
+
+    // Redirect back to the homepage with the search results
+    res.redirect(`/?keyword=${keyword}`);
+});
         
 
 // Start server

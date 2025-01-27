@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motivational Image Search</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/timer">Timer</a></li>
+            <li><a href="/search">Search</a></li>
+            <li><a href="/history">History</a></li>
+            <li><a href="/weather">Weather</a></li>
+            <li><a href="/admin">Admin</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <br>
+    <br>
+    <br>
+    
+    <h1>Motivational Image Search</h1>
+
+    <form action="/search" method="POST">
+        <label for="keyword">Search for images:</label>
+        <input type="text" id="keyword" name="keyword" value="<%= keyword %>" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>Images for: "<%= keyword %>"</h2>
+    <div class="images-container">
+        <% images.forEach(image => { %>
+            <div class="image-card">
+                <img src="<%= image.src.original %>" alt="<%= image.photographer %>">
+                <p>Photographer: <%= image.photographer %></p>
+            </div>
+        <% }); %>
+    </div>
+
+    <br>
+    <a href="/history">View Search History</a>
+
+    <footer>
+        <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
+        <p>IT-2307</p>
+    </footer>
+</body>
+</html>

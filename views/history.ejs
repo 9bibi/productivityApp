@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles.css">
+    <title>Search History</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/timer">Timer</a></li>
+            <li><a href="/search">Search</a></li>
+            <li><a href="/history">History</a></li>
+            <li><a href="/weather">Weather</a></li>
+            <li><a href="/admin">Admin</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <br>
+    <br>
+    <br>
+    
+    <h1>Search History</h1>
+    <ul>
+        <% history.forEach(item => { %>
+            <li>
+                <strong>Keyword: <%= item.keyword %></strong> - <%= item.timestamp.toLocaleString() %>
+                <ul>
+                    <% item.images.forEach(image => { %>
+                        <li><img src="<%= image.src.small %>" alt="<%= image.photographer %>"></li>
+                    <% }); %>
+                </ul>
+            </li>
+        <% }); %>
+    </ul>
+    <br>
+    <a href="/">Go Back</a>
+    <footer>
+        <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
+        <p>IT-2307</p>
+    </footer>
+</body>
+</html>
