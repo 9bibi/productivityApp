@@ -27,7 +27,7 @@ h1 {
 }
 
 button {
-    background-color: #b5273c; /* Softer lavender */
+    background-color: #ff7e7e; /* Softer lavender */
     color: white;
     padding: 10px 20px;
     border: none;
@@ -38,7 +38,7 @@ button {
 }
 
 button:hover {
-    background-color: #8e1f30; /* Lighter lavender for hover */
+    background-color: #ff7e7e; /* Lighter lavender for hover */
 }
 
 input[type="text"], select {
@@ -46,12 +46,12 @@ input[type="text"], select {
     box-sizing: border-box; /* Prevents padding from increasing the width */
     padding: 12px;
     margin: 12px 0;
-    border: 1px solid #b5273c;
+    border: 1px solid #ff7e7e;
     border-radius: 5px;
 }
 
 input[type="text"]:focus, select:focus {
-    border-color: #b5273c;
+    border-color: #ff7e7e;
 }
 
 /* Habit Table Styling */
@@ -65,11 +65,11 @@ table {
 th, td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #b5273c;
+    border-bottom: 1px solid #ff7e7e;
 }
 
 th {
-    background-color: #b5273c; /* Softer lavender */
+    background-color: #ff7e7e; /* Softer lavender */
     color: white;
 }
 
@@ -145,7 +145,7 @@ td button {
 
 /* Navigation Bar Styling */
 nav {
-    background-color: #B22222;
+    background-color: #ff7e7e;
     padding: 10px;
     width: 100%;
     position: fixed;
@@ -210,7 +210,7 @@ nav a:hover {
 
 .article-title {
     color: white; 
-    background-color: red; 
+    background-color: ff7e7e; 
     padding: 10px; 
     border-radius: 5px; 
     text-decoration: none; 
@@ -245,7 +245,7 @@ nav a:hover {
 #login-form h2 {
     font-size: 28px;
     margin-bottom: 20px;
-    color: #B22222;
+    color: #ff7e7e;
 }
 
 #login-form input[type="text"],
@@ -253,14 +253,14 @@ nav a:hover {
     width: 100%;
     padding: 12px;
     margin-bottom: 20px;
-    border: 1px solid #B22222;
+    border: 1px solid #ff7e7e;
     border-radius: 5px;
     box-sizing: border-box;
     font-size: 16px;
 }
 
 #login-form button {
-    background-color: #B22222;
+    background-color: #ff7e7e;
     color: white;
     font-size: 18px;
     padding: 10px 15px;
@@ -272,7 +272,7 @@ nav a:hover {
 }
 
 #login-form button:hover {
-    background-color: #8e1f30;
+    background-color: #ff7e7e;
 }
 
 /* Admin Page Table Enhancements */
@@ -295,12 +295,12 @@ table th, table td {
 
 /* Footer Styling */
 footer {
-    background-color: #B22222;
+    background-color: #ff7e7e;
     color: white;
     text-align: center;
     padding: 10px;
     margin-top: 40px;
-    border-top: 3px solid #8e1f30;
+    border-top: 3px solid #ff7e7e;
     position: relative;
     width: 100%;
 }

@@ -7,10 +7,7 @@ const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const User = require('./models/user');
 const axios = require('axios');
-const { google } = require('googleapis');
 const fs = require('fs');
-const Event = require('./models/event');
-const ApiHistory = require('./models/apiHistory');
 
 
 // MongoDB Atlas connection
@@ -29,8 +26,8 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.set('views', path.join(__dirname, 'views'));  
 app.set('view engine', 'ejs');
-app.use(express.static('public'));
 
 
 // Session setup
@@ -251,88 +248,7 @@ app.get('/', isAuthenticated, (req, res) => {
     res.render('index', { username: req.session.user.username, isAdminUser });
 });
 
-// // Load client secrets
-// const credentials = JSON.parse(fs.readFileSync(path.join(__dirname, 'client_secret_491560506912-smrrt5m9f88ujvj6lv5g6kre2lsgrase.apps.googleusercontent.com.json')));
 
-// // Create OAuth client
-// const oAuth2Client = new google.auth.OAuth2(
-//   credentials.web.client_id,
-//   credentials.web.client_secret,
-//   credentials.web.redirect_uris[0]
-// );
-
-// // Google Calendar API Integration
-// app.get('/auth/google', (req, res) => {
-//   const authUrl = oAuth2Client.generateAuthUrl({
-//     access_type: 'offline',
-//     scope: 'https://www.googleapis.com/auth/calendar.readonly',
-//   });
-//   res.redirect(authUrl);
-// });
-
-// // Callback route after user authorization
-// app.get('/auth/google/callback', async (req, res) => {
-//     const { code } = req.query;
-//     try {
-//       const { tokens } = await oAuth2Client.getToken(code);
-//       oAuth2Client.setCredentials(tokens);
-  
-//       // Store tokens in the session or database for later use
-//       // You can now use this to interact with Google Calendar
-  
-//       // Save API usage history
-//       const history = new ApiHistory({
-//         userId: req.user._id, // Assuming user is authenticated
-//         action: 'Google Calendar API Auth',
-//       });
-//       await history.save();
-  
-//       // Redirect user after successful login
-//       res.redirect('/calendar');
-//     } catch (err) {
-//       res.status(500).send('Authentication failed');
-//     }
-// });
-
-// // Fetch calendar events
-// app.get('/calendar', async (req, res) => {
-//     const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
-//     try {
-//       const response = await calendar.events.list({
-//         calendarId: 'primary',
-//         timeMin: (new Date()).toISOString(),
-//         maxResults: 10,
-//         singleEvents: true,
-//         orderBy: 'startTime',
-//       });
-  
-//       const events = response.data.items;
-//       events.forEach(async (event) => {
-//         // Save events to MongoDB
-//         const newEvent = new Event({
-//           title: event.summary,
-//           startTime: event.start.dateTime || event.start.date,
-//           userId: req.user._id, // Assuming user is authenticated
-//         });
-//         await newEvent.save();
-//     });
-
-//      // Render calendar events in frontend (EJS)
-//      res.render('calendar', { events });
-//     } catch (err) {
-//       res.status(500).send('Error fetching calendar events');
-//     }
-//   });
-  
-//   // View to display calendar events
-//   app.get('/calendar-view', async (req, res) => {
-//     try {
-//       const events = await Event.find({ userId: req.user._id });
-//       res.render('calendar-view', { events });
-//     } catch (err) {
-//       res.status(500).send('Error retrieving events');
-//     }
-// });
 
 // MongoDB Schema for time entries
 const timeEntrySchema = new mongoose.Schema({
@@ -350,7 +266,9 @@ const togglApiToken = '5497ef2d33be904c06d8c5ea5d26bd91';
 const togglWorkspaceId = '8368585';
 
 app.get('/timer', (req, res) => {
-    res.render('homeTimer.ejs'); 
+    const username = req.session.user ? req.session.user.username : null; 
+    const isAdminUser = req.session.user && req.session.user.isAdmin;
+    res.render('homeTimer', { username, isAdminUser }); 
   });
   
 

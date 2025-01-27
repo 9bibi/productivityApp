@@ -4,20 +4,248 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Habit Tracker - Pomodoro Timer</title>
-    <link rel="stylesheet" href="/styles.css"> <!-- Your CSS file if needed -->
+    <link rel="stylesheet" href="/styles.css"> 
+    <style>
+        /* Add custom styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #ffecd2, #fcb69f);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        nav {
+            background-color: #ff7e7e;
+            padding: 1rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 1rem 0;
+            font-size: 2.5rem;
+            color: #333;
+        }
+
+        #timer-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #timer-display {
+            font-size: 3rem;
+            margin: 1rem 0;
+            color: #f76c6c;
+            font-weight: bold;
+        }
+
+        #session-status {
+            margin: 1rem 0;
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            margin: 0.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            background: #f76c6c;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #ff7e7e;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button[disabled] {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        input, select {
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            width: 100%;
+            max-width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        label {
+            font-size: 1rem;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
+
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/timer">Timer</a></li>
+            <li><a href="/weather">Weather</a></li>
+            <li><a href="/admin">Admin</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <br>
+    <br>
+    <br>
 
     <h1>Pomodoro Timer</h1>
 
     <div id="timer-container">
-        <div id="timer-display">
-            <h2 id="session-status">Session Status: <span id="status">Idle</span></h2>
-        </div>
-        <button id="start-btn">Start Timer</button>
+        <form id="settings-form">
+            <label for="topic">Topic:</label>
+            <input type="text" id="topic" placeholder="Enter your topic (e.g., Study, Work)" required>
+            <br>
+            <label for="sessions">Number of Sessions:</label>
+            <input type="number" id="sessions" min="1" value="1" required>
+            <br>
+            <label for="break-time">Break Time (minutes):</label>
+            <input type="number" id="break-time" min="1" value="5" required>
+            <br>
+
+            <button type="submit">Set Timer</button>
+        </form>
+
+        <h2 id="timer-topic"></h2>
+        <h2 id="timer-display">25:00</h2>
+        <p id="session-status">Session Status: <span id="status">Idle</span></p>
+        <button id="start-btn" disabled>Start Timer</button>
         <button id="stop-btn" style="display:none;">Stop Timer</button>
     </div>
 
-    <script src="public/script.js"></script>
+    <script>
+        // Timer variables
+        let timer;
+        let isRunning = false;
+        let timeLeft = 25 * 60;
+        let sessionsLeft = 0;
+        let breakTime = 5 * 60;
+        let currentSession = 0;
+
+        // DOM elements
+        const startButton = document.getElementById('start-btn');
+        const stopButton = document.getElementById('stop-btn');
+        const statusSpan = document.getElementById('status');
+        const timerDisplay = document.getElementById('timer-display');
+        const settingsForm = document.getElementById('settings-form');
+        const timerTopic = document.getElementById('timer-topic');
+
+        // Handle form submission to set timer
+        settingsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const topic = document.getElementById('topic').value;
+            const sessionCount = parseInt(document.getElementById('sessions').value, 10);
+            const breakMinutes = parseInt(document.getElementById('break-time').value, 10);
+
+            if (!topic || sessionCount < 1 || breakMinutes < 1) {
+                alert("Please fill in all fields correctly.");
+                return;
+            }
+
+            sessionsLeft = sessionCount;
+            breakTime = breakMinutes * 60;
+            timeLeft = 25 * 60; // Reset timer to 25 minutes
+            currentSession = 1;
+
+            timerTopic.textContent = `Topic: ${topic}`;
+            statusSpan.textContent = 'Idle';
+            timerDisplay.textContent = '25:00';
+            startButton.disabled = false;
+        });
+
+        // Start and stop timer
+        startButton.addEventListener('click', startTimer);
+        stopButton.addEventListener('click', stopTimer);
+
+        function startTimer() {
+            if (isRunning || sessionsLeft <= 0) return;
+            isRunning = true;
+            statusSpan.textContent = `Session ${currentSession} Running`;
+            startButton.style.display = 'none';
+            stopButton.style.display = 'inline-block';
+
+            timer = setInterval(updateTimer, 1000);
+        }
+
+        function stopTimer() {
+            isRunning = false;
+            statusSpan.textContent = `Session ${currentSession} Stopped`;
+            startButton.style.display = 'inline-block';
+            stopButton.style.display = 'none';
+            clearInterval(timer);
+        }
+
+        function updateTimer() {
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                isRunning = false;
+
+                if (currentSession < sessionsLeft) {
+                    // Start break
+                    statusSpan.textContent = `Break Time`;
+                    timeLeft = breakTime;
+                    currentSession++;
+                    setTimeout(startTimer, 1000); // Automatically start next session after break
+                } else {
+                    statusSpan.textContent = 'Completed All Sessions';
+                    startButton.disabled = true;
+                }
+
+                return;
+            }
+
+            timeLeft--;
+
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+    </script>
+
+    <footer>
+        <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
+        <p>IT-2307</p>
+    </footer>
 </body>
 </html>
