@@ -11,8 +11,6 @@
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/timer">Timer</a></li>
-            <li><a href="/search">Search</a></li>
-            <li><a href="/history">History</a></li>
             <li><a href="/weather">Weather</a></li>
             <li><a href="/admin">Admin</a></li>
             <li><a href="/logout">Logout</a></li>
@@ -25,19 +23,25 @@
     
     <h1>Search History</h1>
     <ul>
-        <% history.forEach(item => { %>
-            <li>
-                <strong>Keyword: <%= item.keyword %></strong> - <%= item.timestamp.toLocaleString() %>
-                <ul>
-                    <% item.images.forEach(image => { %>
-                        <li><img src="<%= image.src.small %>" alt="<%= image.photographer %>"></li>
-                    <% }); %>
-                </ul>
-            </li>
+      <% if (history.length > 0) { %>
+        <% history.forEach(function(entry) { %>
+          <div>
+            <h3>Keyword: <%= entry.keyword %></h3>
+            <p>Timestamp: <%= entry.timestamp %></p>
+            <div>
+              <% entry.images.forEach(function(image) { %>
+                <img src="<%= image %>" alt="Image" style="width: 300px; margin: 10px;">
+              <% }); %>
+            </div>
+          </div>
         <% }); %>
+      <% } else { %>
+        <p>No search history available.</p>
+      <% } %>
+    
     </ul>
     <br>
-    <a href="/">Go Back</a>
+    <a href="/">Go back to image</a>
     <footer>
         <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
         <p>IT-2307</p>

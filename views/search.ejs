@@ -7,44 +7,49 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/timer">Timer</a></li>
-            <li><a href="/search">Search</a></li>
-            <li><a href="/history">History</a></li>
-            <li><a href="/weather">Weather</a></li>
-            <li><a href="/admin">Admin</a></li>
-            <li><a href="/logout">Logout</a></li>
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li><a href="/" class="nav-link">Home</a></li>
+            <li><a href="/timer" class="nav-link">Timer</a></li>
+            <li><a href="/search" class="nav-link">Search</a></li>
+            <li><a href="/weather" class="nav-link">Weather</a></li>
+            <li><a href="/admin" class="nav-link">Admin</a></li>
+            <li><a href="/logout" class="nav-link">Logout</a></li>
         </ul>
     </nav>
 
-    <br>
-    <br>
-    <br>
-    
-    <h1>Motivational Image Search</h1>
+    <main>
+        <header class="main-header">
+            <h1>Motivational Image Search</h1>
+        </header>
 
-    <form action="/search" method="POST">
-        <label for="keyword">Search for images:</label>
-        <input type="text" id="keyword" name="keyword" value="<%= keyword %>" required>
-        <button type="submit">Search</button>
-    </form>
+        <section class="search-section">
+            <form action="/search" method="POST" class="search-form">
+                <label for="keyword" class="search-label">Search for images:</label>
+                <input type="text" id="keyword" name="keyword" class="search-input" placeholder="Enter a keyword" required>
+                <button type="submit" class="search-button">Search</button>
+            </form>
+        </section>
 
-    <h2>Images for: "<%= keyword %>"</h2>
-    <div class="images-container">
-        <% images.forEach(image => { %>
-            <div class="image-card">
-                <img src="<%= image.src.original %>" alt="<%= image.photographer %>">
-                <p>Photographer: <%= image.photographer %></p>
+        <section class="results-section">
+            <h2>Images for: "<%= keyword %>"</h2>
+            <div class="images-container">
+                <% if (images.length > 0) { %>
+                    <% images.forEach(function(image) { %>
+                      <img src="<%= image %>" alt="Image" style="width: 300px; margin: 10px;">
+                    <% }); %>
+                  <% } else { %>
+                    <p>No images found.</p>
+                  <% } %>
             </div>
-        <% }); %>
-    </div>
+        </section>
 
-    <br>
-    <a href="/history">View Search History</a>
+        <div class="history-link">
+            <a href="/history">View Search History</a>
+        </div>
+    </main>
 
-    <footer>
+    <footer class="footer">
         <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
         <p>IT-2307</p>
     </footer>

@@ -336,62 +336,56 @@ app.post('/timer/stop', (req, res) => {
     });
 });
 
-const PEXELS_API_KEY = 'lUP5dA2HJTkoRiMagadoQf8qFC6tJbEyr86DCNqn1Xmnj9EbyZP4YwTw'; // Pexels API key
-const PEXELS_API_URL = 'https://api.pexels.com/v1/search';
-// MongoDB schema and model for storing image data
 const imageSchema = new mongoose.Schema({
-    keyword: { type: String, required: true },
-    images: [{
-      src: { type: String, required: true },
-      photographer: { type: String, required: true },
-      photographer_url: { type: String, required: true },
-    }],
+    keyword: String,
+    images: Array,
     timestamp: { type: Date, default: Date.now },
   });
   
-  const Image = mongoose.model('Image', imageSchema);
+const Image = mongoose.model('Image', imageSchema);
+
+const PEXELS_API_KEY = 'lUP5dA2HJTkoRiMagadoQf8qFC6tJbEyr86DCNqn1Xmnj9EbyZP4YwTw'; // Pexels API key
+const PEXELS_API_URL = 'https://api.pexels.com/v1/search';
+
+// Serve the search page when the user first visits the /search route
+app.get('/search', (req, res) => {
+    res.render('search', { images: [], keyword: '' });
+  });
   
-  // Fetch images from Pexels API
-  async function fetchImages(keyword) {
+app.post('/search', async (req, res) => {
+    const keyword = req.body.keyword;
+  
     try {
       const response = await axios.get(PEXELS_API_URL, {
-        headers: {
-          Authorization: PEXELS_API_KEY,
-        },
+        headers: { Authorization: PEXELS_API_KEY },
         params: { query: keyword, per_page: 10 },
       });
   
-      return response.data.photos.map(photo => ({
-        src: photo.src.medium,
-        photographer: photo.photographer,
-        photographer_url: photo.photographer_url
-      })); // Format the data for saving
+      const images = response.data.photos.map(photo => photo.src.original);
+  
+      // Save search data to MongoDB
+      const newSearch = new Image({
+        keyword,
+        images,
+      });
+      await newSearch.save();
+  
+      // Render the search page with images
+      res.render('search', { images, keyword });
     } catch (error) {
-      console.error('Error fetching images:', error);
-      return [];
+      console.error(error);
+      res.status(500).send('Error retrieving images.');
     }
-  }
-  
-  // Route to search for images and store them in MongoDB
-  app.post('/search', async (req, res) => {
-    const keyword = req.body.keyword;
-    const images = await fetchImages(keyword);
-  
-    const newImageData = new Image({
-      keyword: keyword,
-      images: images,
-      timestamp: new Date(),
-    });
-  
-    await newImageData.save();
-  
-    res.json({ message: 'Images stored successfully!', images: images });
   });
   
-  // Route to get search history
   app.get('/history', async (req, res) => {
-    const history = await Image.find().sort({ timestamp: -1 });
-    res.json(history);
+    try {
+      const history = await Image.find().sort({ timestamp: -1 });
+      res.render('history', { history });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error retrieving history.');
+    }
   });
   
 // Start server
