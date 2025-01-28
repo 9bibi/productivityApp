@@ -6,7 +6,6 @@
     <title>Habit Tracker - Pomodoro Timer</title>
     <link rel="stylesheet" href="/styles.css"> 
     <style>
-        /* Add custom styles */
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(to right, #ffecd2, #fcb69f);
@@ -155,7 +154,6 @@
     </div>
 
     <script>
-        // Timer variables
         let timer;
         let isRunning = false;
         let timeLeft = 25 * 60;
@@ -163,7 +161,6 @@
         let breakTime = 5 * 60;
         let currentSession = 0;
 
-        // DOM elements
         const startButton = document.getElementById('start-btn');
         const stopButton = document.getElementById('stop-btn');
         const statusSpan = document.getElementById('status');
@@ -171,7 +168,6 @@
         const settingsForm = document.getElementById('settings-form');
         const timerTopic = document.getElementById('timer-topic');
 
-        // Handle form submission to set timer
         settingsForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -186,7 +182,7 @@
 
             sessionsLeft = sessionCount;
             breakTime = breakMinutes * 60;
-            timeLeft = 25 * 60; // Reset timer to 25 minutes
+            timeLeft = 25 * 60; 
             currentSession = 1;
 
             timerTopic.textContent = `Topic: ${topic}`;

@@ -97,7 +97,7 @@ app.get('/logout', (req, res) => {
 
 // Weather API endpoint
 app.get('/weather/data', async (req, res) => {
-    const { city } = req.query; // City name passed as query parameter
+    const { city } = req.query; 
     const apiKey = 'e8d7ebbdc114120d0381a62520b0720c';
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
@@ -135,7 +135,6 @@ app.get('/quote', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch quote' });
     }
 });
-// NewsAPI to fetch articles related to productivity and life
 app.get('/articles', async (req, res) => {
     try {
         const response = await fetch('https://newsapi.org/v2/everything?q=productivity&apiKey=765c90c3f5bb425e8477d9bb99589f06');
@@ -166,11 +165,11 @@ let progress = {}; // Object to store progress of habits
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/addHabit', (req, res) => {
-    console.log('Received habit data:', req.body); // Debug log
+    console.log('Received habit data:', req.body); 
     const { name, frequency, category, goal } = req.body;
     const habit = { name, frequency, category, goal, streak: 0, completedDays: 0, progress: [] };
     habits.push(habit);
-    console.log('Updated habits:', habits); // Debug log
+    console.log('Updated habits:', habits); 
     res.status(200).json({ message: 'Habit added successfully!', habit });
 });
 
@@ -253,15 +252,14 @@ app.get('/', isAuthenticated, (req, res) => {
 // MongoDB Schema for time entries
 const timeEntrySchema = new mongoose.Schema({
     userId: { type: String, required: true },
-    sessionType: { type: String, required: true }, // 'work' or 'break'
+    sessionType: { type: String, required: true }, 
     duration: { type: Number, required: true }, // duration in seconds
     timestamp: { type: Date, default: Date.now },
-    togglEntryId: { type: String, required: true } // Store Toggl entry ID
+    togglEntryId: { type: String, required: true } 
 });
 
 const TimeEntry = mongoose.model('TimeEntry', timeEntrySchema);
 
-// Toggl API Token (replace with your actual Toggl API token)
 const togglApiToken = '5497ef2d33be904c06d8c5ea5d26bd91';
 const togglWorkspaceId = '8368585';
 
@@ -272,11 +270,10 @@ app.get('/timer', (req, res) => {
   });
   
 
-// Start timer route (Toggl API)
+// Start timer route 
 app.post('/timer/start', (req, res) => {
     const { userId, sessionType } = req.body;
 
-    // Start time entry with Toggl
     axios.post('https://api.track.toggl.com/api/v8/time_entries/start', {
         time_entry: {
             description: `${sessionType} Pomodoro session`,
@@ -287,13 +284,12 @@ app.post('/timer/start', (req, res) => {
     }, {
         auth: {
             username: togglApiToken,
-            password: 'api_token', // Using your Toggl API token for basic auth
+            password: 'api_token', 
         }
     })
     .then(response => {
         const togglEntryId = response.data.data.id;
 
-        // Save entry in MongoDB with Toggl entry ID
         const timeEntry = new TimeEntry({
             userId,
             sessionType,
@@ -312,11 +308,10 @@ app.post('/timer/start', (req, res) => {
     });
 });
 
-// Stop timer route (Toggl API)
+// Stop timer route 
 app.post('/timer/stop', (req, res) => {
     const { timeEntryId } = req.body;
 
-    // Stop the time entry with Toggl
     axios.put(`https://api.track.toggl.com/api/v8/time_entries/${timeEntryId}/stop`, {}, {
         auth: {
             username: togglApiToken,
@@ -324,7 +319,6 @@ app.post('/timer/stop', (req, res) => {
         }
     })
     .then(response => {
-        // Update duration in MongoDB (fetch the duration from Toggl response)
         const duration = response.data.data.duration;
 
         TimeEntry.findOneAndUpdate({ togglEntryId: timeEntryId }, { duration })
@@ -347,7 +341,7 @@ const Image = mongoose.model('Image', imageSchema);
 const PEXELS_API_KEY = 'lUP5dA2HJTkoRiMagadoQf8qFC6tJbEyr86DCNqn1Xmnj9EbyZP4YwTw'; // Pexels API key
 const PEXELS_API_URL = 'https://api.pexels.com/v1/search';
 
-// Serve the search page when the user first visits the /search route
+
 app.get('/search', (req, res) => {
     res.render('search', { images: [], keyword: '' });
   });
