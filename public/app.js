@@ -7,6 +7,10 @@ const habitList = document.getElementById('habit-list');
 const notification = document.getElementById('notification');
 let habitChart;
 
+const BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000' 
+    : 'https://your-api-service.onrender.com';
+
 const articlesSection = document.getElementById('articles'); 
 
 async function fetchQuote() {
@@ -78,7 +82,7 @@ addHabitBtn.addEventListener('click', () => {
     console.log('Habit details to be added:', { habitName, habitFrequency, habitCategory, habitGoal }); // Debug log
 
     if (habitName) {
-        fetch('https://productivityapp-f6q9.onrender.com/addHabit', {
+        fetch('${BASE_URL}/addHabit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: habitName, frequency: habitFrequency, category: habitCategory, goal: habitGoal })
@@ -99,7 +103,7 @@ addHabitBtn.addEventListener('click', () => {
 });
 // Update habit progress
 function updateProgress(habitName, completed) {
-    fetch('https://productivityapp-f6q9.onrender.com/updateProgress', {
+    fetch('${BASE_URL}/updateProgress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ habitName, completed })
@@ -116,7 +120,7 @@ function updateProgress(habitName, completed) {
 
 // Delete a habit
 function deleteHabit(habitName) {
-    fetch('https://productivityapp-f6q9.onrender.com/deleteHabit', {
+    fetch('${BASE_URL}/deleteHabit', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ habitName })
@@ -172,7 +176,7 @@ function updateChart(habits) {
 }
 
 function fetchHabits() {
-    fetch('https://productivityapp-f6q9.onrender.com/getHabits')
+    fetch('${BASE_URL}/getHabits')
         .then(response => {
             if (!response.ok) throw new Error('Failed to fetch habits');
             return response.json();

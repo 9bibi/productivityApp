@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
 const path = require('path');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -8,6 +7,8 @@ const session = require('express-session');
 const User = require('./models/user');
 const axios = require('axios');
 const fs = require('fs');
+const cors = require('cors');
+
 
 
 
@@ -20,6 +21,15 @@ mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
 // Express app setup
 const app = express();
 const port = 3000;
+
+const allowedOrigins = [
+    'http://localhost:3000',  // For local development
+    'https://productivityapp-f6q9.onrender.com'  // For deployed site
+];
+
+app.use(cors({
+    origin: allowedOrigins
+}));
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
