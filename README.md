@@ -5,7 +5,7 @@
 This Habit Tracker application allows users to track their daily habits and progress over time, along with some additional features like a Pomodoro timer, weather updates, motivational quotes, and a searching for images. The application also includes an admin panel for managing users.
 
 ## Features
-- **User Authentication & Authorization**: Users can sign up, log in, and log out. Admin users can manage other users.
+- **User Authentication & Authorization**: Users can log in and log out. Admin can create and manage other users on the admin dashboard. The admin page is only accessible for users who has logged in as an admin.
 - **Habit Management**: Users can add, update, delete, and track habits.
 - **Pomodoro Timer**: Track work and break sessions using the Pomodoro technique with integrations to Toggl.
 - **Weather API**: Get real-time weather data for a given city.
@@ -116,7 +116,7 @@ Displays the privacy policy page of the application.
    password: 20051809
 
 *** little detail that you must know:
-    the habits adding, updating, deleting and any other way of interacting with it is not available on render hosting website(https://productivityapp-f6q9.onrender.com). Because this functionality uses -> http://localhost:3000. Therefore, the render link doesn't consist that, but that's the only difference from the http://localhost:3000.
+    the habits adding, updating, deleting and any other way of interacting with it is not available on render hosting website(https://productivityapp-f6q9.onrender.com). Because this          functionality uses -> http://localhost:3000. Therefore, the render link doesn't consist that, but that's the only difference from the http://localhost:3000.
 
 ## Developers
 Aibibi Nygymetolla, Ayala Zholdybayeva, Moldir Kapal
