@@ -7,6 +7,8 @@ const habitList = document.getElementById('habit-list');
 const notification = document.getElementById('notification');
 let habitChart;
 
+const apiUrl = process.env.API_BASE_URL || 'http://localhost:3000';
+
 const articlesSection = document.getElementById('articles'); 
 
 async function fetchQuote() {
@@ -78,7 +80,7 @@ addHabitBtn.addEventListener('click', () => {
     console.log('Habit details to be added:', { habitName, habitFrequency, habitCategory, habitGoal }); // Debug log
 
     if (habitName) {
-        fetch('http://localhost:3000/addHabit', {
+        fetch('${apiUrl}/addHabit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: habitName, frequency: habitFrequency, category: habitCategory, goal: habitGoal })
@@ -100,7 +102,7 @@ addHabitBtn.addEventListener('click', () => {
 
 // Update habit progress
 function updateProgress(habitName, completed) {
-    fetch('http://localhost:3000/updateProgress', {
+    fetch('${apiUrl}/updateProgress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ habitName, completed })
@@ -117,7 +119,7 @@ function updateProgress(habitName, completed) {
 
 // Delete a habit
 function deleteHabit(habitName) {
-    fetch('http://localhost:3000/deleteHabit', {
+    fetch('${apiUrl}/deleteHabit', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ habitName })
@@ -173,7 +175,7 @@ function updateChart(habits) {
 }
 
 function fetchHabits() {
-    fetch('http://localhost:3000/getHabits')
+    fetch('${apiUrl}/getHabits')
         .then(response => {
             if (!response.ok) throw new Error('Failed to fetch habits');
             return response.json();

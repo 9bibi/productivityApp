@@ -8,6 +8,8 @@ const session = require('express-session');
 const User = require('./models/user');
 const axios = require('axios');
 const fs = require('fs');
+require('dotenv').config();
+
 
 
 // MongoDB Atlas connection
