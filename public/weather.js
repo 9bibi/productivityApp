@@ -1,7 +1,7 @@
 document.getElementById('fetch-weather-btn').addEventListener('click', () => {
     const city = document.getElementById('city').value;
     if (city) {
-        fetch(`http://localhost:3000/weather/data?city=${city}`)
+        fetch(`https://productivityapp-f6q9.onrender.com/weather/data?city=${city}`)
             .then(response => response.json())
             .then(data => {
                 const { main, weather, wind, sys, coord, rain } = data;
