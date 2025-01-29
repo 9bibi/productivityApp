@@ -78,7 +78,7 @@ addHabitBtn.addEventListener('click', () => {
     console.log('Habit details to be added:', { habitName, habitFrequency, habitCategory, habitGoal }); // Debug log
 
     if (habitName) {
-        fetch('http://localhost:3000/addHabit', {
+        fetch('https://productivityapp-o6g9.onrender.com/addHabit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: habitName, frequency: habitFrequency, category: habitCategory, goal: habitGoal })
