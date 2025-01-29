@@ -7,10 +7,6 @@ const habitList = document.getElementById('habit-list');
 const notification = document.getElementById('notification');
 let habitChart;
 
-const BASE_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:3000' 
-    : 'https://your-api-service.onrender.com';
-
 const articlesSection = document.getElementById('articles'); 
 
 async function fetchQuote() {
@@ -21,7 +17,7 @@ async function fetchQuote() {
             const quoteText = quoteData.text;
             const quoteAuthor = quoteData.author;
 
-            document.getElementById('daily-quote').innerHTML = "${quoteText}" - <strong>${quoteAuthor}</strong>;
+            document.getElementById('daily-quote').innerHTML = `"${quoteText}" - <strong>${quoteAuthor}</strong>`;
         } else {
             document.getElementById('daily-quote').innerText = "Failed to load quote.";
         }
@@ -82,7 +78,7 @@ addHabitBtn.addEventListener('click', () => {
     console.log('Habit details to be added:', { habitName, habitFrequency, habitCategory, habitGoal }); // Debug log
 
     if (habitName) {
-        fetch('${BASE_URL}/addHabit', {
+        fetch('http://localhost:3000/addHabit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: habitName, frequency: habitFrequency, category: habitCategory, goal: habitGoal })
@@ -101,9 +97,10 @@ addHabitBtn.addEventListener('click', () => {
         showNotification('Please enter a habit name.', 'error');
     }
 });
+
 // Update habit progress
 function updateProgress(habitName, completed) {
-    fetch('${BASE_URL}/updateProgress', {
+    fetch('http://localhost:3000/updateProgress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ habitName, completed })
@@ -120,7 +117,7 @@ function updateProgress(habitName, completed) {
 
 // Delete a habit
 function deleteHabit(habitName) {
-    fetch('${BASE_URL}/deleteHabit', {
+    fetch('http://localhost:3000/deleteHabit', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ habitName })
@@ -176,7 +173,7 @@ function updateChart(habits) {
 }
 
 function fetchHabits() {
-    fetch('${BASE_URL}/getHabits')
+    fetch('http://localhost:3000/getHabits')
         .then(response => {
             if (!response.ok) throw new Error('Failed to fetch habits');
             return response.json();
