@@ -7,7 +7,9 @@ const habitList = document.getElementById('habit-list');
 const notification = document.getElementById('notification');
 let habitChart;
 
-const apiUrl = process.env.API_BASE_URL || 'http://localhost:3000';
+const apiUrl = window.location.hostname === 'localhost'
+    ? 'http://localhost:3000'  // Local development API
+    : 'https://myapp.onrender.com';  // Render production API
 
 const articlesSection = document.getElementById('articles'); 
 
