@@ -115,6 +115,9 @@ Displays the privacy policy page of the application.
    username: adminayala
    password: 20051809
 
+*** little detail that you must know:
+    the habits adding, updating, deleting and any other way of interacting with it is not available on render hosting website(https://productivityapp-f6q9.onrender.com). Because this functionality uses -> http://localhost:3000. Therefore, the render link doesn't consist that, but that's the only difference from the http://localhost:3000.
+
 ## Developers
 Aibibi Nygymetolla, Ayala Zholdybayeva, Moldir Kapal
 
