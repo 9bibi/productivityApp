@@ -7,42 +7,53 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+    
     <nav>
         <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/timer">Timer</a></li>
-            <li><a href="/search">Search</a></li>
-            <li><a href="/weather">Weather</a></li>
+            <li><a href="/"><span data-translate="home">Home</span></a></li>
+            <li><a href="/timer"><span data-translate="timer">Timer</span></a></li>
+            <li><a href="/books"><span data-translate="books">Books</span></a></li>
+            <li><a href="/search"><span data-translate="images">Images</span></a></li>
+            <li><a href="/bonus"><span data-translate="bonus">Bonus</span></a></li>
+            <li><a href="/weather"><span data-translate="weather">Weather</span></a></li>
             <% if (username) { %>
                 <% if (isAdminUser) { %>
-                    <li><a href="/admin">Admin</a></li>
+                    <li><a href="/admin"><span data-translate="admin">Admin</span></a></li>
                 <% } %>
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="/logout"><span data-translate="logout">Logout</span></a></li>
             <% } else { %>
-                <li><a href="/login">Login</a></li>
+                <li><a href="/login"><span data-translate="login">Login</span></a></li>
             <% } %>
         </ul>
+    
+        <!-- Language Selector -->
+        <div class="language-selector-container">
+            <select id="language-selector">
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+            </select>
+        </div>
     </nav>
+    
     <div class="container">
         <h1>Admin Panel</h1>
-        
+
+        <!-- Add User Section -->
         <form action="/admin/add" method="POST" class="form-section">
             <h3>Add User</h3>
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
             <br>
             <br>
-
             <label for="isAdmin">
                 <input type="checkbox" name="isAdmin"> Admin
             </label>
             <br>
             <br>
-
-
             <button type="submit">Add</button>
         </form>
         
+        <!-- User List Section -->
         <div class="user-list">
             <h3>User List</h3>
             <ul>
@@ -54,10 +65,8 @@
                                 <input type="checkbox" name="isAdmin" <%= user.isAdmin ? 'checked' : '' %>> Admin
                             </label>
                             <br>
-                            <br>
                             <button type="submit">Edit</button>
                         </form>
-                        <br>
                         <br>
                         <form action="/admin/delete/<%= user._id %>" method="POST" class="inline-form">
                             <button type="submit" class="delete-btn">Delete</button>
@@ -66,12 +75,73 @@
                 <% }) %>
             </ul>
         </div>
+
+        <!-- Add Wellness Tip Section -->
+        <form id="add-wellness-tip-form" class="form-section">
+            <h3>Add Wellness Tip</h3>
+            <label for="images">Image URLs (3 required):</label>
+            <input type="text" name="images" placeholder="Image URL 1" required>
+            <input type="text" name="images" placeholder="Image URL 2" required>
+            <input type="text" name="images" placeholder="Image URL 3" required>
+            <br>
+            <label for="name_en">Name (English):</label>
+            <input type="text" name="name_en" placeholder="Name in English" required>
+            <br>
+            <label for="name_ru">Name (Russian):</label>
+            <input type="text" name="name_ru" placeholder="Name in Russian" required>
+            <br>
+            <label for="description_en">Description (English):</label>
+            <textarea name="description_en" placeholder="Description in English" required></textarea>
+            <br>
+            <label for="description_ru">Description (Russian):</label>
+            <textarea name="description_ru" placeholder="Description in Russian" required></textarea>
+            <br>
+            <button type="submit">Add Wellness Tip</button>
+        </form>
+
+        <!-- Wellness Tips List Section -->
+        <div class="wellness-tips-list">
+            <h3>Wellness Tips List</h3>
+            <ul>
+                <% wellnessTips.forEach(tip => { %>
+                    <li>
+                        <form action="/api/wellness-tips/<%= tip._id %>" method="POST" class="edit-wellness-tip-form inline-form">
+                            <label for="images">Image URLs:</label>
+                            <input type="text" name="images" value="<%= tip.images[0] %>" required>
+                            <input type="text" name="images" value="<%= tip.images[1] %>" required>
+                            <input type="text" name="images" value="<%= tip.images[2] %>" required>
+                            <br>
+                            <label for="name_en">Name (English):</label>
+                            <input type="text" name="name_en" value="<%= tip.name_en %>" required>
+                            <br>
+                            <label for="name_ru">Name (Russian):</label>
+                            <input type="text" name="name_ru" value="<%= tip.name_ru %>" required>
+                            <br>
+                            <label for="description_en">Description (English):</label>
+                            <textarea name="description_en" required><%= tip.description_en %></textarea>
+                            <br>
+                            <label for="description_ru">Description (Russian):</label>
+                            <textarea name="description_ru" required><%= tip.description_ru %></textarea>
+                            <br>
+                            <button type="submit">Edit</button>
+                        </form>
+                        <br>
+                        <form action="/api/wellness-tips/<%= tip._id %>" method="POST" class="delete-wellness-tip-form inline-form">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="delete-btn">Delete</button>
+                        </form>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
     </div>
+    <script src="/translate.js"></script>    
 
     <footer>
         <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
         <p>IT-2307</p>
     </footer>
-    
+
+    <script src="/restAPI.js"></script>
 </body>
 </html>

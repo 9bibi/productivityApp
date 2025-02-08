@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Search</title>
+    
+    
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffe2db;
+            margin: 0;
+            padding: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 750px;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #000000;
+        }
+
+        /* Button */
+        button {
+            background-color: #ff7e7e;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff7e7e;
+        }
+
+        /* Search Form Styling */
+        .search-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            border: 1px solid #ff7e7e;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .input-field:focus {
+            border-color: #ff7e7e;
+        }
+
+        .submit-btn {
+            padding: 12px 25px;
+            background-color: #ff7e7e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .submit-btn:hover {
+            background-color: #ff5e5e;
+        }
+
+        /* Error Message Styling */
+        .error-message {
+            color: #e74c3c;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        /* Book Results Styling */
+        .results-header {
+            color: #ff7e7e;
+            font-size: 28px;
+            margin-top: 20px;
+        }
+
+        .book-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .book-item {
+            background-color: #ffe6e6;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .book-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .book-title {
+            color: #d736ab;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .book-link {
+            display: inline-block;
+            background-color: #d736ab;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .book-link:hover {
+            background-color: #bc3199;
+        }
+
+        /* Pagination Styling */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .pagination-btn {
+            padding: 12px 20px;
+            background-color: #ff7e7e;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .pagination-btn:hover {
+            background-color: #ff5e5e;
+        }
+
+        /* Floating Notification Styling */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 16px;
+            border-radius: 10px;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            z-index: 9999;
+            font-family: Arial, sans-serif;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .notification.success {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .notification.error {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .notification.show {
+            display: block;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .notification.hide {
+            opacity: 0;
+            transform: translateX(-50%) translateY(100%);
+        }
+
+        /* Navigation Bar Styling */
+        nav {
+            background-color: #ff7e7e;
+            padding: 10px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav li {
+            margin: 0 15px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer Styling */
+        footer {
+            background-color: #ff7e7e;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 40px;
+            border-top: 3px solid #ff7e7e;
+            position: relative;
+            width: 100vw;
+        }
+
+        .language-selector-container {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+        }
+
+        #language-selector {
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            background: transparent;
+            color: #ffffff;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            font-size: 14px;
+        }
+
+        /* Optional: Add a subtle underline effect */
+        #language-selector:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/timer">Timer</a></li>
+            <li><a href="/books">Books</a></li>
+            <li><a href="/search">Images</a></li>
+            <li><a href="/bonus">Bonus</a></li>
+            <li><a href="/weather">Weather</a></li>
+            <li><a href="/admin">Admin</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+        <div class="language-selector-container">
+            <select id="language-selector">
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+            </select>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Search for Books</h1>
+
+        <!-- Search Form -->
+        <form action="/books/search" method="POST" class="search-form">
+            <input type="text" name="q" value="<%= query %>" placeholder="Enter book title" required class="input-field">
+            <input type="text" name="author" value="<%= author %>" placeholder="Author (optional)" class="input-field">
+            <select name="language" class="input-field">
+                <option value="en" <%= language === "en" ? "selected" : "" %>>English</option>
+                <option value="fr" <%= language === "fr" ? "selected" : "" %>>French</option>
+                <option value="de" <%= language === "de" ? "selected" : "" %>>German</option>
+            </select>
+            <input type="text" name="subject" value="<%= subject %>" placeholder="Subject (optional)" class="input-field">
+            <button type="submit" class="submit-btn">Search</button>
+        </form>
+
+        <!-- Error Message -->
+        <% if (error) { %>
+            <p class="error-message"><%= error %></p>
+        <% } %>
+
+        <!-- Book Results -->
+        <% if (books.length > 0) { %>
+            <h2 class="results-header">Results for: "<%= query %>"</h2>
+
+            <div class="book-list">
+                <% books.forEach(book => { %>
+                    <div class="book-item">
+                        <h3 class="book-title"><%= book.title %></h3>
+                        <p><strong>Author:</strong> <%= book.authors %></p>
+                        <p><strong>Language:</strong> <%= book.language %></p>
+                        <p><strong>Subjects:</strong> <%= book.subjects %></p>
+                        <a href="<%= book.link %>" class="book-link" target="_blank">Read Now</a>
+                    </div>
+                <% }) %>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <% if (prevPage) { %>
+                    <a href="/books/search?q=<%= query %>&author=<%= author %>&page=<%= prevPage %>" class="pagination-btn">Previous</a>
+                <% } %>
+                <% if (nextPage) { %>
+                    <a href="/books/search?q=<%= query %>&author=<%= author %>&page=<%= nextPage %>" class="pagination-btn">Next</a>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+
+    <script src="/translate.js"></script>    
+
+    <footer>
+        <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
+        <p>IT-2307</p>
+    </footer>
+</body>
+</html>

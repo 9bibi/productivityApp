@@ -7,21 +7,29 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <nav class="navbar">
-        <ul class="nav-list">
-            <li><a href="/" class="nav-link">Home</a></li>
-            <li><a href="/timer" class="nav-link">Timer</a></li>
-            <li><a href="/search" class="nav-link">Search</a></li>
-            <li><a href="/weather" class="nav-link">Weather</a></li>
-            <li><a href="/admin" class="nav-link">Admin</a></li>
-            <li><a href="/logout" class="nav-link">Logout</a></li>
+    <nav>
+        <ul>
+            <li><a href="/"><span data-translate="home">Home</span></a></li>
+            <li><a href="/timer"><span data-translate="timer">Timer</span></a></li>
+            <li><a href="/books"><span data-translate="books">Books</span></a></li>
+            <li><a href="/search"><span data-translate="images">Images</span></a></li>
+            <li><a href="/bonus"><span data-translate="bonus">Bonus</span></a></li>
+            <li><a href="/weather"><span data-translate="weather">Weather</span></a></li>
+            <li><a href="/admin"><span data-translate="admin">Admin</span></a></li>
+            <li><a href="/logout"><span data-translate="logout">Logout</span></a></li>
         </ul>
+    
+        <!-- Language Selector -->
+        <div class="language-selector-container">
+            <select id="language-selector">
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+            </select>
+        </div>
     </nav>
 
-    <main>
-        <header class="main-header">
+    <div class="container">
             <h1>Motivational Image Search</h1>
-        </header>
 
         <section class="search-section">
             <form action="/search" method="POST" class="search-form">
@@ -47,7 +55,8 @@
         <div class="history-link">
             <a href="/history">View Search History</a>
         </div>
-    </main>
+    </div>
+    <script src="/translate.js"></script>    
 
     <footer class="footer">
         <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>

@@ -9,8 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "## Overview This Habit Tracker application allows users to track their daily habits and progress over time, along with some additional features like a Pomodoro timer, weather updates, motivational quotes, and a searching for images. The application also includes an admin panel for managing users.",
   "dependencies": {
+    "@google-cloud/translate": "^8.5.0",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
@@ -20,7 +21,15 @@
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
-    "mongoose": "^8.9.5",
+    "mongoose": "^8.10.0",
     "node-fetch": "^2.7.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/9bibi/productivityApp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/9bibi/productivityApp/issues"
+  },
+  "homepage": "https://github.com/9bibi/productivityApp#readme"
 }

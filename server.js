@@ -5,10 +5,11 @@ const path = require('path');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
-const User = require('./models/user');
 const axios = require('axios');
 const fs = require('fs');
-
+const User = require('./models/user');
+const Quiz = require("./models/Quiz");
+const WellnessTip = require('./models/WellnessTip');
 
 // MongoDB Atlas connection
 const mongoURI = 'mongodb+srv://ayala0852580:OBaHXAY4gCZyN8hG@cluster0.tnwec.mongodb.net/HabitTracker?retryWrites=true&w=majority&appName=Cluster0';
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));  
+app.use(session({ secret: "secretKey", resave: false, saveUninitialized: true }));
 app.set('view engine', 'ejs');
 
 
@@ -93,6 +95,36 @@ app.get('/logout', (req, res) => {
         res.clearCookie('connect.sid');
         res.redirect('/login');
     });
+});
+
+app.get("/register", (req, res) => {
+    res.render("register", { error: req.query.error || null });
+});
+
+app.post("/register", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      // Check if user already exists
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.render("register", { error: "Username already taken" });
+    }
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new User({
+        username,
+        password: hashedPassword,
+        createdAt: new Date(),
+        updatedAt: null,
+        deletedAt: null,
+        isAdmin: false,
+      });
+      await newUser.save();
+      
+      return res.redirect("/login");
+    } catch (error) {
+        res.status(500).render("register", { error: "Server error. Please try again." });
+    }
 });
 
 // Weather API endpoint
@@ -166,11 +198,11 @@ let progress = {}; // Object to store progress of habits
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/addHabit', (req, res) => {
-    console.log('Received habit data:', req.body); // Debug log
+    console.log('Received habit data:', req.body);
     const { name, frequency, category, goal } = req.body;
     const habit = { name, frequency, category, goal, streak: 0, completedDays: 0, progress: [] };
     habits.push(habit);
-    console.log('Updated habits:', habits); // Debug log
+    console.log('Updated habits:', habits);
     res.status(200).json({ message: 'Habit added successfully!', habit });
 });
 
@@ -205,17 +237,25 @@ app.delete('/deleteHabit', (req, res) => {
 });
 
 app.get('/admin', isAuthenticated, isAdmin, async (req, res) => {
-    const users = await User.find();
+    const users = await User.find({ deletedAt: null });
+    const wellnessTips = await WellnessTip.find({ deletedAt: null });
     const username = req.session.user.username;
     const isAdminUser = req.session.user && req.session.user.isAdmin;
-    res.render('admin', { users, username, isAdminUser });
+    res.render('admin', { users, wellnessTips, username, isAdminUser });
 });
 
 app.post('/admin/add', isAuthenticated, isAdmin, async (req, res) => {
-    const { username, password, isAdmin } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    await User.create({ username, password: hashedPassword, isAdmin });
-    res.redirect('/admin');
+    try {
+        const { username, password, isAdmin } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await User.create({ username, password: hashedPassword, isAdmin });
+
+        return res.redirect('/admin'); 
+    } catch (error) {
+        console.error("Error adding user:", error);
+        return res.status(500).send("Error adding user");
+    }
 });
 
 app.post('/admin/edit/:id', async (req, res) => {
@@ -238,17 +278,22 @@ app.post('/admin/edit/:id', async (req, res) => {
 });
 
 app.post('/admin/delete/:id', isAuthenticated, isAdmin, async (req, res) => {
-    const { id } = req.params;
-    await User.findByIdAndUpdate(id, { deletedAt: new Date() });
-    res.redirect('/admin');
+    try {
+        const { id } = req.params;
+        await User.findByIdAndUpdate(id, { deletedAt: new Date() });
+
+        return res.redirect('/admin');
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        return res.status(500).send("Error deleting user");
+    }
 });
 
-app.get('/', isAuthenticated, (req, res) => {
+app.get('/', isAuthenticated, async (req, res) => {
     const isAdminUser = req.session.user && req.session.user.isAdmin;
-    res.render('index', { username: req.session.user.username, isAdminUser });
+    const wellnessTips = await WellnessTip.find({ deletedAt: null });
+    res.render('index', { username: req.session.user.username, isAdminUser, wellnessTips});
 });
-
-
 
 // MongoDB Schema for time entries
 const timeEntrySchema = new mongoose.Schema({
@@ -261,13 +306,74 @@ const timeEntrySchema = new mongoose.Schema({
 
 const TimeEntry = mongoose.model('TimeEntry', timeEntrySchema);
 
-// Toggl API Token (replace with your actual Toggl API token)
+// Toggl API Token 
 const togglApiToken = '5497ef2d33be904c06d8c5ea5d26bd91';
 const togglWorkspaceId = '8368585';
+
+// FreeSound API function
+const getAmbientSounds = async (query) => {
+    try {
+        const response = await axios.get('https://freesound.org/apiv2/search/text/', {
+            headers: { Authorization: `Token yKifXdSQm4TevvjGj60iSMDE0gNur0mYU7yhP8Ph` }, 
+            params: {
+                query: query,
+                fields: 'id,name,previews',
+            },
+        });
+        if (!response.data || !response.data.results) {
+            console.error("Invalid response from FreeSound API");
+            return [];
+        }
+        
+        return response.data.results.map(sound => ({
+            name: sound.name,
+            url: sound.previews["preview-hq-mp3"]
+        }));
+        
+    } catch (error) {
+        console.error('Error fetching sounds:', error);
+        return [];
+    }
+};
+
+app.get('/api/sounds', async (req, res) => {
+    const query = req.query.q || 'ambient'; // Default to 'ambient' if no query is provided
+    console.log("Received request to /api/sounds with query:", query);
+
+
+    try {
+        const sounds = await getAmbientSounds(query);
+        console.log("Fetched sounds:", sounds);
+        res.json(sounds);
+    } catch (error) {
+        console.error("Error fetching sounds:", error);
+        res.status(500).json({ error: 'Failed to fetch sounds' });
+    }
+});
+
+
+// Route to handle sound selection
+app.post('/play-sound', async (req, res) => {
+    const { sound } = req.body;
+
+    try {
+        const sounds = await getAmbientSounds();
+        const selectedSound = sounds.find(s => s.name === sound);
+
+        if (selectedSound) {
+            res.json({ success: true, url: selectedSound.url });
+        } else {
+            res.json({ success: false, message: "Sound not found" });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error fetching sounds" });
+    }
+});
 
 app.get('/timer', (req, res) => {
     const username = req.session.user ? req.session.user.username : null; 
     const isAdminUser = req.session.user && req.session.user.isAdmin;
+
     res.render('homeTimer', { username, isAdminUser }); 
   });
   
@@ -336,6 +442,8 @@ app.post('/timer/stop', (req, res) => {
     });
 });
 
+
+
 const imageSchema = new mongoose.Schema({
     keyword: String,
     images: Array,
@@ -386,8 +494,272 @@ app.post('/search', async (req, res) => {
       console.error(error);
       res.status(500).send('Error retrieving history.');
     }
-  });
-  
+});
+
+
+// Render the book search page (GET)
+app.get("/books", (req, res) => {
+    const q = "";  // Default value for query
+    const author = "";  // Default value for author
+    const language = "";  // Default value for language
+    const subject = "";  // Default value for subject
+    const page = 1;  // Default page value
+
+    res.render("books", {
+        books: [],
+        query: q,
+        author,
+        language,
+        subject,
+        page,
+        error: null  // No error message initially
+    });
+});
+
+// Handle book search (GET & POST)
+app.all("/books/search", async (req, res) => {
+    const { q, author, language, subject, page = 1 } = req.method === "POST" ? req.body : req.query;
+
+    console.log("Received Search Query:", req.method, req.body || req.query);
+
+    // Check if the search query is empty
+    if (!q) {
+        return res.render("books", {
+            books: [],
+            query: "",
+            author: "",
+            language: "",
+            subject: "",
+            page: 1,
+            error: "Please enter a search term."
+        });
+    }
+
+    try {
+        const apiUrl = `https://gutendex.com/books/?search=${encodeURIComponent(q)}&author=${encodeURIComponent(author || "")}&languages=${encodeURIComponent(language || "")}&topic=${encodeURIComponent(subject || "")}&page=${page}`;
+        console.log("Fetching data from API:", apiUrl);
+
+        const response = await axios.get(apiUrl);
+        console.log("API Response:", response.data);
+
+        const books = response.data.results.map(book => ({
+            title: book.title,
+            authors: book.authors.map(author => author.name).join(", "),
+            language: book.languages.join(", "),
+            subjects: book.subjects ? book.subjects.join(", ") : "No subjects",
+            link: book.formats["text/html"] || book.formats["application/pdf"] || "No link available"
+        }));
+
+        // If no books are found, set error message
+        const error = books.length === 0 ? "No books found for your search." : null;
+
+        res.render("books", {
+            books: books,
+            query: q,
+            author,
+            language,
+            subject,
+            page,
+            prevPage: response.data.previous ? parseInt(page) - 1 : null,
+            nextPage: response.data.next ? parseInt(page) + 1 : null,
+            error: error // Pass error if no books were found
+        });
+    } catch (error) {
+        console.error("Error fetching books:", error);
+        res.render("books", {
+            books: [],
+            query: q,
+            author,
+            language,
+            subject,
+            page,
+            error: "Failed to fetch books."
+        });
+    }
+});
+app.get("/bonus", (req, res) => {
+    res.render("bonus");
+});
+// Render Quiz Page
+app.get("/quiz", async (req, res) => {
+    try {
+        const quizQuestions = await Quiz.find(); // Fetch questions from MongoDB
+        console.log("Fetched quiz questions:", quizQuestions); // Debugging
+        res.render("quiz", { quizQuestions }); // ✅ Pass `quizQuestions` to EJS
+    } catch (err) {
+        console.error("Error fetching questions:", err);
+        res.status(500).send("Error loading quiz");
+    }
+});
+
+// Submit Quiz
+app.post("/submit-quiz", async (req, res) => {
+    let score = 0;
+    const userAnswers = req.body;
+
+    const quizQuestions = await Quiz.find({});
+    quizQuestions.forEach((question) => {
+        if (userAnswers[question._id] === question.correctAnswer) {
+            score++;
+        }
+    });
+
+    res.redirect(`/result?score=${score}`);
+});
+
+// Show Result & Social Sharing
+app.get("/result", (req, res) => {
+    const score = req.query.score;
+    res.render("result", { score });
+});
+
+// Add a new wellness tip
+app.post('/api/wellness-tips', async (req, res) => {
+    try {
+        const { images, name_en, name_ru, description_en, description_ru } = req.body;
+
+        // Validate input
+        if (!images || images.length !== 3 || !name_en || !name_ru || !description_en || !description_ru) {
+            return res.status(400).json({ message: 'Invalid input. Please provide all required fields.' });
+        }
+
+        const newWellnessTip = new WellnessTip({
+            images,
+            name_en,
+            name_ru,
+            description_en,
+            description_ru,
+        });
+
+        await newWellnessTip.save();
+
+        res.status(201).json({
+            message: 'Wellness tip added successfully!',
+            data: newWellnessTip,
+        });
+    } catch (error) {
+        console.error('Error adding wellness tip:', error);
+        res.status(500).json({ message: 'Server error. Please try again.' });
+    }
+});
+
+// Edit an existing wellness tip
+app.put('/api/wellness-tips/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { images, name_en, name_ru, description_en, description_ru } = req.body;
+
+        // Validate input
+        if (!images || images.length !== 3 || !name_en || !name_ru || !description_en || !description_ru) {
+            return res.status(400).json({ message: 'Invalid input. Please provide all required fields.' });
+        }
+
+        const updatedWellnessTip = await WellnessTip.findByIdAndUpdate(
+            id,
+            {
+                images,
+                name_en,
+                name_ru,
+                description_en,
+                description_ru,
+                updatedAt: Date.now(),
+            },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedWellnessTip) {
+            return res.status(404).json({ message: 'Wellness tip not found.' });
+        }
+
+        res.status(200).json({
+            message: 'Wellness tip updated successfully!',
+            data: updatedWellnessTip,
+        });
+    } catch (error) {
+        console.error('Error updating wellness tip:', error);
+        res.status(500).json({ message: 'Server error. Please try again.' });
+    }
+});
+
+// Delete a wellness tip (soft delete)
+app.delete('/api/wellness-tips/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deletedWellnessTip = await WellnessTip.findByIdAndUpdate(
+            id,
+            { deletedAt: Date.now() },
+            { new: true } // Return the updated document
+        );
+
+        if (!deletedWellnessTip) {
+            return res.status(404).json({ message: 'Wellness tip not found.' });
+        }
+
+        res.status(200).json({
+            message: 'Wellness tip deleted successfully!',
+            data: deletedWellnessTip,
+        });
+    } catch (error) {
+        console.error('Error deleting wellness tip:', error);
+        res.status(500).json({ message: 'Server error. Please try again.' });
+    }
+});
+
+// Get all wellness tips (excluding deleted ones)
+app.get('/api/wellness-tips', async (req, res) => {
+    try {
+        const wellnessTips = await WellnessTip.find({ deletedAt: null });
+
+        res.status(200).json({
+            message: 'Wellness tips retrieved successfully!',
+            data: wellnessTips,
+        });
+    } catch (error) {
+        console.error('Error retrieving wellness tips:', error);
+        res.status(500).json({ message: 'Server error. Please try again.' });
+    }
+});
+
+const { Translate } = require("@google-cloud/translate").v2;
+
+app.get("/translate", async (req, res) => {
+    const { text, lang } = req.query;
+    const API_KEY = "AIzaSyAW6r3EIIi1CrdCOgNvrFgI8A4xBBDEaZc"; 
+
+    if (!text || !lang) {
+        return res.status(400).json({ error: "Missing text or language" });
+    }
+
+    try {
+        const response = await axios.post(
+            `https://translation.googleapis.com/language/translate/v2`,
+            {},
+            {
+                params: {
+                    q: text,
+                    target: lang,
+                    key: API_KEY,
+                },
+            }
+        );
+
+        if (!response.data || !response.data.data || !response.data.data.translations) {
+            throw new Error("Invalid API response");
+        }
+
+        const translatedText = response.data.data.translations[0].translatedText;
+        res.json({ translation: translatedText });
+
+    } catch (error) {
+        console.error("Translation API Error:", error.response?.data || error.message);
+        res.status(500).json({ error: "Translation failed" });
+    }
+});
+
+
+
+
 // Start server
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

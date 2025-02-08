@@ -1,7 +1,7 @@
 /* Global Styles */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #fdf8f8;
+    background-color: #ffe2db;
     margin: 0;
     padding: 50px;
     display: flex;
@@ -30,6 +30,7 @@ button {
     background-color: #ff7e7e; /* Softer lavender */
     color: white;
     padding: 10px 20px;
+    margin: 15px 0;
     border: none;
     border-radius: 5px;
     font-size: 16px;
@@ -248,15 +249,22 @@ nav a:hover {
     color: #ff7e7e;
 }
 
-#login-form input[type="text"],
-#login-form input[type="password"] {
+input[type="text"],
+input[type="password"] {
     width: 100%;
+    box-sizing: border-box;
     padding: 12px;
-    margin-bottom: 20px;
+    margin: 12px 0;
     border: 1px solid #ff7e7e;
     border-radius: 5px;
-    box-sizing: border-box;
     font-size: 16px;
+}
+
+/* Focus state for text and password input fields */
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: #ff7e7e;
+    outline: none; /* Remove default browser outline */
 }
 
 #login-form button {
@@ -292,6 +300,169 @@ table th, table td {
     padding: 15px;
     text-align: center;
 }
+/* Bonus Section Styling */
+.bonus-section {
+    background-color: #ffe6e6;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 50px;
+}
+
+.bonus-section h2 {
+    font-size: 28px;
+    color: #ff7e7e;
+    margin-bottom: 20px;
+}
+
+.bonus-content {
+    font-size: 18px;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* Navbar Bonus Link */
+nav ul li .bonus-link {
+    color: #ff7e7e;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+nav ul li .bonus-link:hover {
+    color: #ff4d4d;
+    text-decoration: underline;
+}
+* Wellness Tips Container */ 
+.wellness-tips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+/* Wellness Tips Container */ 
+.wellness-tips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+    justify-content: flex-start; /* Align items to the left properly */
+}
+
+/* Wellness Tip Block */
+.wellness-tip-block {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    flex: 0 1 calc(33.333% - 60px); /* Three blocks per row */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    transition: width 0.3s ease;
+    max-width: 400px; /* Limit max width */
+}
+
+/* Ensure that if there's an odd number of items, they are properly aligned */
+.wellness-tips-container::after {
+    content: "";
+    flex: 0 1 calc(33.333% - 20px); /* Empty flex item to fill space */
+    visibility: hidden;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .wellness-tip-block {
+        flex: 0 1 calc(50% - 20px); /* Two blocks per row on tablets */
+    }
+    .wellness-tips-container::after {
+        flex: 0 1 calc(50% - 20px); /* Maintain alignment */
+    }
+}
+
+@media (max-width: 600px) {
+    .wellness-tip-block {
+        flex: 0 1 100%; /* One block per row on mobile */
+    }
+    .wellness-tips-container::after {
+        display: none; /* Remove empty space filler */
+    }
+}
+
+/* Carousel */
+.carousel {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.carousel-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.carousel-image.active {
+    opacity: 1;
+}
+
+.carousel-prev,
+.carousel-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 18px;
+}
+
+.carousel-prev {
+    left: 10px;
+}
+
+.carousel-next {
+    right: 10px;
+}
+
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border: 1px solid #ff7e7e;
+    border-radius: 5px;
+    font-size: 16px;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.back-button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    padding: 8px 15px;
+    background-color: #ff7e7e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+}
+.back-button:hover {
+    background-color: #ff5e5e;
+}
 
 /* Footer Styling */
 footer {
@@ -305,4 +476,26 @@ footer {
     width: 100vw;
 }
 
+.language-selector-container {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
 
+#language-selector {
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    background: transparent;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+    font-size: 14px;
+}
+
+/* Optional: Add a subtle underline effect */
+#language-selector:hover {
+    text-decoration: underline;
+}

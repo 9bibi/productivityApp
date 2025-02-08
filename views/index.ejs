@@ -8,23 +8,34 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <!-- Navigation Bar placed outside the container at the top -->
     <nav>
         <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/timer">Timer</a></li>
-            <li><a href="/search">Search</a></li>
-            <li><a href="/weather">Weather</a></li>
+            <li><a href="/"><span data-translate="home">Home</span></a></li>
+            <li><a href="/timer"><span data-translate="timer">Timer</span></a></li>
+            <li><a href="/books"><span data-translate="books">Books</span></a></li>
+            <li><a href="/search"><span data-translate="images">Images</span></a></li>
+            <li><a href="/bonus"><span data-translate="bonus">Bonus</span></a></li>
+            <li><a href="/weather"><span data-translate="weather">Weather</span></a></li>
             <% if (username) { %>
                 <% if (isAdminUser) { %>
-                    <li><a href="/admin">Admin</a></li>
+                    <li><a href="/admin"><span data-translate="admin">Admin</span></a></li>
                 <% } %>
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="/logout"><span data-translate="logout">Logout</span></a></li>
             <% } else { %>
-                <li><a href="/login">Login</a></li>
+                <li><a href="/login"><span data-translate="login">Login</span></a></li>
             <% } %>
         </ul>
+    
+        <!-- Language Selector -->
+        <div class="language-selector-container">
+            <select id="language-selector">
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+            </select>
+        </div>
     </nav>
+    
+    
     
     <div id="quote-section">
         <h2>Daily Motivation</h2>
@@ -84,11 +95,60 @@
               </div>
         </div>
     </div>
-    
+
+    <!-- Wellness Tips Section -->
+    <div class="wellness-tips-container">
+        <% wellnessTips.forEach(tip => { -%>
+            <div class="wellness-tip-block">        
+                <!-- Carousel for Images -->
+                <div class="carousel">
+                    <% tip.images.forEach((image, index) => { %>
+                        <img src="<%= image %>" alt="Wellness Tip Image <%= index + 1 %>" class="carousel-image <%= index === 0 ? 'active' : '' %>">
+                    <% }) %>
+                    <button class="carousel-prev">&#10094;</button>
+                    <button class="carousel-next">&#10095;</button>
+                </div>
+
+                <!-- Name and Description -->
+                <h3><%= tip.name_en %></h3>
+                <p><%= tip.description_en %></p>
+            </div>
+        <% }) %>
+    </div>
+    <!-- JavaScript for Carousel -->
+    <script>
+        // Carousel functionality
+        document.querySelectorAll('.carousel').forEach(carousel => {
+            const images = carousel.querySelectorAll('.carousel-image');
+            let currentIndex = 0;
+
+            // Show the current image
+            const showImage = (index) => {
+                images.forEach((image, i) => {
+                    image.classList.toggle('active', i === index);
+                });
+            };
+
+            // Next button
+            carousel.querySelector('.carousel-next').addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % images.length;
+                showImage(currentIndex);
+            });
+
+            // Previous button
+            carousel.querySelector('.carousel-prev').addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                showImage(currentIndex);
+            });
+        });
+    </script>
+
     <section id="articles">
     </section>
 
     <script src="app.js"></script>
+    <script src="/translate.js"></script>    
+
 
     <footer>
         <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>

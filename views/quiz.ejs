@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script>
+        let timeLeft = 30;
+        function countdown() {
+            if (timeLeft === 0) {
+                document.getElementById("quizForm").submit();
+            } else {
+                document.getElementById("timer").innerText = timeLeft + " seconds remaining";
+                timeLeft--;
+                setTimeout(countdown, 1000);
+            }
+        }
+        window.onload = countdown;
+    </script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/"><span data-translate="home">Home</span></a></li>
+            <li><a href="/timer"><span data-translate="timer">Timer</span></a></li>
+            <li><a href="/books"><span data-translate="books">Books</span></a></li>
+            <li><a href="/search"><span data-translate="images">Images</span></a></li>
+            <li><a href="/bonus"><span data-translate="bonus">Bonus</span></a></li>
+            <li><a href="/weather"><span data-translate="weather">Weather</span></a></li>
+            <li><a href="/admin"><span data-translate="admin">Admin</span></a></li>
+            <li><a href="/logout"><span data-translate="logout">Logout</span></a></li>
+        </ul>
+    
+        <!-- Language Selector -->
+        <div class="language-selector-container">
+            <select id="language-selector">
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+            </select>
+        </div>
+    </nav>  
+    <br>
+    <button onclick="window.location.href='/bonus';">Back to Bonus</button>
+    <h1>Timed Quiz</h1>
+    <p id="timer"></p>
+
+    <form id="quizForm" action="/submit-quiz" method="POST">
+        <% if (quizQuestions && quizQuestions.length > 0) { %>
+            <% quizQuestions.forEach((q, index) => { %>
+                <p><%= index + 1 %>. <%= q.question %></p>
+                <% q.options.forEach(option => { %>
+                    <input type="radio" name="<%= q._id.toString() %>" value="<%= option %>"> <%= option %><br>
+                <% }) %>
+            <% }) %>
+        <% } else { %>
+            <p>No questions found in the database.</p>
+        <% } %>
+        <button type="submit">Submit</button>
+    </form>
+    <script src="/translate.js"></script>    
+
+    <footer>
+        <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
+        <p>IT-2307</p>
+    </footer>
+
+</body>
+</html>

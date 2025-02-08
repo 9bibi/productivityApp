@@ -7,15 +7,27 @@
     <title>Search History</title>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/timer">Timer</a></li>
-            <li><a href="/weather">Weather</a></li>
-            <li><a href="/admin">Admin</a></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </nav>
+  
+  <nav>
+    <ul>
+        <li><a href="/"><span data-translate="home">Home</span></a></li>
+        <li><a href="/timer"><span data-translate="timer">Timer</span></a></li>
+        <li><a href="/books"><span data-translate="books">Books</span></a></li>
+        <li><a href="/search"><span data-translate="images">Images</span></a></li>
+        <li><a href="/bonus"><span data-translate="bonus">Bonus</span></a></li>
+        <li><a href="/weather"><span data-translate="weather">Weather</span></a></li>
+        <li><a href="/admin"><span data-translate="admin">Admin</span></a></li>
+        <li><a href="/logout"><span data-translate="logout">Logout</span></a></li>
+    </ul>
+
+    <!-- Language Selector -->
+    <div class="language-selector-container">
+        <select id="language-selector">
+            <option value="en">English</option>
+            <option value="ru">Russian</option>
+        </select>
+    </div>
+</nav>
 
     <br>
     <br>
@@ -42,6 +54,9 @@
     </ul>
     <br>
     <a href="/">Go back to image</a>
+
+    <script src="/translate.js"></script>    
+    
     <footer>
         <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
         <p>IT-2307</p>

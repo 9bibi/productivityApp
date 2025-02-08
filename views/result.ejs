@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Result</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/"><span data-translate="home">Home</span></a></li>
+            <li><a href="/timer"><span data-translate="timer">Timer</span></a></li>
+            <li><a href="/books"><span data-translate="books">Books</span></a></li>
+            <li><a href="/search"><span data-translate="images">Images</span></a></li>
+            <li><a href="/bonus"><span data-translate="bonus">Bonus</span></a></li>
+            <li><a href="/weather"><span data-translate="weather">Weather</span></a></li>
+            <li><a href="/admin"><span data-translate="admin">Admin</span></a></li>
+            <li><a href="/logout"><span data-translate="logout">Logout</span></a></li>
+        </ul>
+    
+        <!-- Language Selector -->
+        <div class="language-selector-container">
+            <select id="language-selector">
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+            </select>
+        </div>
+    </nav>
+    <br>
+    <button onclick="window.location.href='/bonus';">Back to Bonus</button>
+    <h1>Your Score: <%= score %></h1>
+    <p>Share your results with your friends!</p>
+    
+    <a href="https://www.facebook.com/sharer/sharer.php?u=http://yourwebsite.com/quiz&quote=I scored <%= score %> on this quiz!">
+        Share on Facebook
+    </a><br>
+    
+    <a href="https://twitter.com/intent/tweet?url=http://yourwebsite.com/quiz&text=I scored <%= score %> on this quiz!">
+        Share on Twitter
+    </a><br>
+    
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url=http://yourwebsite.com/quiz">
+        Share on LinkedIn
+    </a>
+    <script src="/translate.js"></script>    
+
+    <footer>
+        <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
+        <p>IT-2307</p>
+    </footer>
+</body>
+</html>

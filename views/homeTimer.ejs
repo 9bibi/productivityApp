@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #ffecd2, #fcb69f);
+            background-color: #ffe2db;
             margin: 0;
             padding: 0;
             color: #333;
@@ -16,7 +16,7 @@
 
         nav {
             background-color: #ff7e7e;
-            padding: 1rem;
+            padding: 10px;
         }
 
         nav ul {
@@ -92,7 +92,6 @@
         }
 
         button[disabled] {
-            background: #ccc;
             cursor: not-allowed;
         }
 
@@ -110,6 +109,27 @@
             font-size: 1rem;
             color: #555;
         }
+        .icon-button {
+            all: unset; /* Reset all inherited styles */
+            cursor: pointer; /* Keep pointer cursor */
+            
+        }
+        .icon-button:hover{
+            
+            all: unset; /* Reset all inherited styles */
+            cursor: pointer; /* Keep pointer cursor */
+        }
+
+        .icon-button img {
+            width: 25px;
+            height: 25px;
+            margin-right: 8px
+        }
+        #play-sound {
+            margin-left: 10px; /* Adjust spacing */
+        }
+
+
     </style>
 </head>
 <body>
@@ -118,20 +138,24 @@
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/timer">Timer</a></li>
-            <li><a href="/search">Search</a></li>
+            <li><a href="/books">Books</a></li>
+            <li><a href="/search">Images</a></li>
+            <li><a href="/bonus">Bonus</a></li>
             <li><a href="/weather">Weather</a></li>
             <li><a href="/admin">Admin</a></li>
             <li><a href="/logout">Logout</a></li>
         </ul>
+        <!-- Language Selector -->
+        <div class="language-selector-container">
+        <select id="language-selector">
+            <option value="en">English</option>
+            <option value="ru">Russian</option>
+        </select>
+        </div>
     </nav>
 
-    <br>
-    <br>
-    <br>
-
-    <h1>Pomodoro Timer</h1>
-
     <div id="timer-container">
+        <h1>Pomodoro Timer</h1>
         <form id="settings-form">
             <label for="topic">Topic:</label>
             <input type="text" id="topic" placeholder="Enter your topic (e.g., Study, Work)" required>
@@ -151,6 +175,33 @@
         <p id="session-status">Session Status: <span id="status">Idle</span></p>
         <button id="start-btn" disabled>Start Timer</button>
         <button id="stop-btn" style="display:none;">Stop Timer</button>
+    </div>
+
+    <!-- Sounds Section -->
+    <div id="sound-container">
+        <h1>Search and Play Sounds</h1>
+        <label for="sound-search">
+            <img src="/images/icon.png" alt="Search Icon" width="25" height="25">
+        </label>
+        <input type="text" id="sound-search" placeholder="Enter song name">
+        <button id="search-sound">Search</button>
+        <br>
+        <label for="sound-select">
+            <img src="/images/icon2.png" alt="Choose Icon" width="25" height="25">
+        </label>
+        <select id="sound-select">
+            <option value="">Select a sound</option>
+        </select>
+        
+        <button id="play-sound" class="icon-button">
+            <img src="/images/play.png" alt="PlayButton Icon" width="25" height="25">
+        </button>
+
+        <button id="stop-sound" disabled class="icon-button">
+            <img src="/images/stop.png" alt="StopButton Icon" width="25" height="25">
+        </button>
+        <audio id="audio-player" loop></audio>
+    
     </div>
 
     <script>
@@ -238,7 +289,55 @@
             const seconds = timeLeft % 60;
             timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
         }
+
+        
+        document.getElementById("search-sound").addEventListener("click", () => {
+    const searchQuery = document.getElementById("sound-search").value.trim();
+    if (!searchQuery) return;
+
+    console.log("Fetching:", `/api/sounds?q=${encodeURIComponent(searchQuery)}`); // Debugging
+
+    fetch(`/api/sounds?q=${encodeURIComponent(searchQuery)}`)
+        .then(response => {
+            console.log("Response status:", response.status);
+            return response.json();
+        })
+        .then(sounds => {
+            console.log("Fetched sounds:", sounds);
+            const select = document.getElementById("sound-select");
+            select.innerHTML = '<option value="">Select a sound</option>';
+            sounds.forEach(sound => {
+                const option = document.createElement("option");
+                option.value = sound.url;
+                option.textContent = sound.name;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => console.error("Error loading sounds:", error));
+});
+
+
+        const audioPlayer = document.getElementById("audio-player");
+        const playButton = document.getElementById("play-sound");
+        const stopMButton = document.getElementById("stop-sound");
+
+        playButton.addEventListener("click", () => {
+            const soundUrl = document.getElementById("sound-select").value;
+            if (!soundUrl) return;
+            audioPlayer.src = soundUrl;
+            audioPlayer.play();
+            stopMButton.disabled = false;
+        });
+
+        stopMButton.addEventListener("click", () => {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            stopMButton.disabled = true;
+        });
+
     </script>
+    <script src="/translate.js"></script>    
+
 
     <footer>
         <p>Aibibi Nygymetolla, Ayala Zholdybaeva, Moldir Kapal</p>
