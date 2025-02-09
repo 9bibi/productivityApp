@@ -337,7 +337,7 @@ const getAmbientSounds = async (query) => {
 };
 
 app.get('/api/sounds', async (req, res) => {
-    const query = req.query.q || 'ambient'; // Default to 'ambient' if no query is provided
+    const query = req.query.q ; 
     console.log("Received request to /api/sounds with query:", query);
 
 
@@ -393,7 +393,7 @@ app.post('/timer/start', (req, res) => {
     }, {
         auth: {
             username: togglApiToken,
-            password: 'api_token', // Using your Toggl API token for basic auth
+            password: 'api_token',
         }
     })
     .then(response => {
@@ -452,7 +452,7 @@ const imageSchema = new mongoose.Schema({
   
 const Image = mongoose.model('Image', imageSchema);
 
-const PEXELS_API_KEY = 'lUP5dA2HJTkoRiMagadoQf8qFC6tJbEyr86DCNqn1Xmnj9EbyZP4YwTw'; // Pexels API key
+const PEXELS_API_KEY = 'lUP5dA2HJTkoRiMagadoQf8qFC6tJbEyr86DCNqn1Xmnj9EbyZP4YwTw'; 
 const PEXELS_API_URL = 'https://api.pexels.com/v1/search';
 
 // Serve the search page when the user first visits the /search route
@@ -512,7 +512,7 @@ app.get("/books", (req, res) => {
         language,
         subject,
         page,
-        error: null  // No error message initially
+        error: null 
     });
 });
 
