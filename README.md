@@ -1,17 +1,21 @@
-
 # Habit Tracker Application
 
 ## Overview
-This Habit Tracker application allows users to track their daily habits and progress over time, along with some additional features like a Pomodoro timer, weather updates, motivational quotes, and a searching for images. The application also includes an admin panel for managing users.
+This Habit Tracker application allows users to track their daily habits and progress over time, along with some additional features like a Pomodoro timer with BGM, library, weather updates, motivational quotes, and a searching for images. The application also includes an admin panel for managing users.
 
 ## Features
 - **User Authentication & Authorization**: Users can log in and log out. Admin can create and manage other users on the admin dashboard. The admin page is only accessible for users who has logged in as an admin.
 - **Habit Management**: Users can add, update, delete, and track habits.
+- **Book Search**: Users can search for books using the Gutendex API.
+- **Wellness Tips API**: Admin can retrieve, add, update, and delete wellness tips.
 - **Pomodoro Timer**: Track work and break sessions using the Pomodoro technique with integrations to Toggl.
 - **Weather API**: Get real-time weather data for a given city.
 - **Motivational Quote API**: Fetch motivational quotes to inspire users.
 - **News API**: Fetch articles related to productivity and life.
 - **Search Images & History**: Users can search for images and view their previous search history.
+- **FreeSound API**: Allows users to search and play ambient sounds.
+- **Google Cloud Translation API**:: Users can translate pages in website into russian.
+- **Quiz**:: A timed quiz with seven questions and sharing quiz result in social media functionality.
 
 ## Routes
 
@@ -67,6 +71,21 @@ Searches for images based on a keyword using the Pexels API.
 #### `GET /history`
 Displays a list of previous search histories (images based on keyword searches).
 
+#### `GET /books`
+Renders the book search page.
+
+#### `GET /api/wellness-tips`
+Fetches all wellness tips.
+
+#### `GET /api/sounds`
+Fetches ambient sounds from FreeSound API.
+
+#### `GET /translate`
+Translates text into different languages using Google Translate API.
+
+#### `GET /quiz`
+Displays the quiz page.
+
 ### Admin Routes (Protected by Authentication)
 
 #### `GET /admin`
@@ -96,6 +115,9 @@ Displays the privacy policy page of the application.
     - NewsAPI (for productivity-related articles)
     - Pexels API (for image searches)
     - Toggl API (for Pomodoro timer integration)
+    - Gutendex API (for book search)
+    - FreeSound API (for ambient sounds)
+    - Google Translate API (for translations)
 
 ## Setup and Installation
 
@@ -120,5 +142,3 @@ Displays the privacy policy page of the application.
 
 ## Developers
 Aibibi Nygymetolla, Ayala Zholdybayeva, Moldir Kapal
-
-
