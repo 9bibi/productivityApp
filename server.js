@@ -337,7 +337,7 @@ const getAmbientSounds = async (query) => {
 };
 
 app.get('/api/sounds', async (req, res) => {
-    const query = req.query.q ; 
+    const query = req.query.q; 
     console.log("Received request to /api/sounds with query:", query);
 
 

@@ -31,18 +31,25 @@
     <button onclick="window.location.href='/bonus';">Back to Bonus</button>
     <h1>Your Score: <%= score %></h1>
     <p>Share your results with your friends!</p>
+
+    <div class="social-buttons">
+        <a id="whatsapp-share" target="_blank">Share on WhatsApp</a><br>
+        <a id="facebook-share" target="_blank">Share on Facebook</a><br>
+        <a id="telegram-share" target="_blank">Share on Telegram</a>
+    </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const score = "<%= score %>";
+        const quizURL = encodeURIComponent("http://productivityapp-f6q9.onrender.com/quiz");
+        const shareText = encodeURIComponent(`I scored ${score} on this quiz! Can you beat me?`);
+
+        document.getElementById("whatsapp-share").href = `https://api.whatsapp.com/send?text=${shareText} ${quizURL}`;
+        document.getElementById("facebook-share").href = `https://www.facebook.com/sharer/sharer.php?u=${quizURL}&quote=${shareText}`;
+        document.getElementById("telegram-share").href = `https://t.me/share/url?url=${quizURL}&text=${shareText}`;
+    });
+    </script>
     
-    <a href="https://www.facebook.com/sharer/sharer.php?u=http://yourwebsite.com/quiz&quote=I scored <%= score %> on this quiz!">
-        Share on Facebook
-    </a><br>
-    
-    <a href="https://twitter.com/intent/tweet?url=http://yourwebsite.com/quiz&text=I scored <%= score %> on this quiz!">
-        Share on Twitter
-    </a><br>
-    
-    <a href="https://www.linkedin.com/sharing/share-offsite/?url=http://yourwebsite.com/quiz">
-        Share on LinkedIn
-    </a>
+
     <script src="/translate.js"></script>    
 
     <footer>
